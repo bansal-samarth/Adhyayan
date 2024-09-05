@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650165813899",
+    "project_id": "adhyayan-4a7d5",
+    "storage_bucket": "adhyayan-4a7d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650165813899:android:836398dd27c783c61d4a8e",
+        "android_client_info": {
+          "package_name": "com.adhyayan.adhyayan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHZTyXuJCanjpSsVEmeVyj0ya58TmfUcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
