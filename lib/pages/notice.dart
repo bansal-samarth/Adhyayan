@@ -114,18 +114,20 @@ class _NoticePageState extends State<NoticePage> {
     // Check if the notice is from today
     if (daysAgo == 0) {
       int hoursAgo = difference.inHours;
-      return hoursAgo > 0 ? '$hoursAgo hours ago' : 'Just now';
+      return hoursAgo > 0
+          ? '$hoursAgo ${AppLocalizations.of(context)!.hours_ago}'
+          : AppLocalizations.of(context)!.just_now;
     }
 
     // Check if the notice is from yesterday
     if (currentDate.day - noticeDateTime.day == 1 &&
         currentDate.month == noticeDateTime.month &&
         currentDate.year == noticeDateTime.year) {
-      return 'Yesterday';
+      return AppLocalizations.of(context)!.yesterday;
     }
 
     // For other cases, return days ago
-    return '$daysAgo days ago';
+    return '$daysAgo ${AppLocalizations.of(context)!.days_ago}';
   }
 
   @override
@@ -155,7 +157,7 @@ class _NoticePageState extends State<NoticePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'Notice Board',
+                            AppLocalizations.of(context)!.notice_board,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
@@ -210,9 +212,9 @@ class _NoticePageState extends State<NoticePage> {
                         onPressed: _showMoreNotices,
                         icon: const Icon(Icons.arrow_downward,
                             color: Colors.white),
-                        label: const Text(
-                          'View more',
-                          style: TextStyle(
+                        label: Text(
+                          AppLocalizations.of(context)!.view_more,
+                          style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -385,7 +387,7 @@ class NoticeDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'From: $name',
+                      '${AppLocalizations.of(context)!.from}: $name',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -437,8 +439,8 @@ class NoticeDetailPage extends StatelessWidget {
                           'Notice from $name\n\nSubject: $subject\n\n$content');
                     },
                     icon: const Icon(Icons.share, color: Colors.white),
-                    label: const Text('Share',
-                        style: TextStyle(color: Colors.white)),
+                    label: Text(AppLocalizations.of(context)!.share,
+                        style: const TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[800],
                       shape: RoundedRectangleBorder(

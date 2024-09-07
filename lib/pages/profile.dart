@@ -38,20 +38,11 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            DropdownButton<String>(
-              value: Localizations.localeOf(context).languageCode,
-              items: const [
-                DropdownMenuItem(value: 'en', child: Text('English')),
-                DropdownMenuItem(value: 'hi', child: Text('Hindi')),
-                DropdownMenuItem(value: 'bn', child: Text('Bengali')),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  changeLanguage(value); // Update language
-                }
-              },
+            LanguageSelector(
+              currentLanguage: Localizations.localeOf(context).languageCode,
+              onLanguageChanged: changeLanguage,
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -115,9 +106,7 @@ class ProfilePage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  _logout(context); // Call the logout function
-                },
+                onPressed: () => _logout(context),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   backgroundColor: Colors.red,
@@ -143,18 +132,90 @@ class ProfilePage extends StatelessWidget {
   }
 
   Future<void> _logout(BuildContext context) async {
-    // Clear SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-
-    // Check if the context is still valid
     if (context.mounted) {
-      // Navigate to LoginPage and remove all previous routes
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginPage()),
         (route) => false,
       );
     }
+  }
+}
+
+class LanguageSelector extends StatelessWidget {
+  final String currentLanguage;
+  final Function(String) onLanguageChanged;
+
+  const LanguageSelector({
+    Key? key,
+    required this.currentLanguage,
+    required this.onLanguageChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildLanguageBox(context, 'en', 'English', 'ENG'),
+          _buildLanguageBox(context, 'hi', 'हिन्दी', 'HIN'),
+          _buildLanguageBox(context, 'bn', 'বাংলা', 'BEN'),
+          _buildLanguageBox(context, 'pa', 'ਪੰਜਾਬੀ', 'PUN'),
+          _buildLanguageBox(context, 'gu', 'ગુજરાતી', 'GUJ'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageBox(
+      BuildContext context, String code, String name, String shortName) {
+    bool isSelected = currentLanguage == code;
+    return GestureDetector(
+      onTap: () => onLanguageChanged(code),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.green : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              shortName,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              name,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black54,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

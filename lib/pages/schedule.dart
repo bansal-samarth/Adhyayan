@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:calendar_slider/calendar_slider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -79,9 +80,10 @@ class _SchedulePageState extends State<SchedulePage> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0,
-        title: const Text(
-          'Schedule',
-          style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.schedule,
+          style:
+              const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -134,7 +136,7 @@ class _SchedulePageState extends State<SchedulePage> {
     if (sessionsForDay.isEmpty) {
       return Center(
         child: Text(
-          'No sessions for ${DateFormat('MMMM d, yyyy').format(_selectedDate)}',
+          '${AppLocalizations.of(context)!.no_session} ${DateFormat('MMMM d, yyyy').format(_selectedDate)}',
           style: TextStyle(fontSize: 18, color: Colors.green[800]),
         ),
       );
@@ -151,7 +153,7 @@ class _SchedulePageState extends State<SchedulePage> {
                 style: TextStyle(
                     color: Colors.green[700], fontWeight: FontWeight.bold)),
             subtitle: Text(
-                '${session.subjectContent}\n${session.time}\nDuration: ${session.duration}'),
+                '${session.subjectContent}\n${session.time}\n${AppLocalizations.of(context)!.duration}: ${session.duration}'),
             onTap: () {
               _showSessionDetails(session);
             },
@@ -172,11 +174,11 @@ class _SchedulePageState extends State<SchedulePage> {
           title:
               Text(session.subject, style: TextStyle(color: Colors.green[800])),
           content: Text(
-            '${session.subjectContent}\n${session.time}\nDuration: ${session.duration}',
+            '${session.subjectContent}\n${session.time}\n${AppLocalizations.of(context)!.duration}: ${session.duration}',
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Join Meeting',
+              child: Text(AppLocalizations.of(context)!.join_meeting,
                   style: TextStyle(color: Colors.green[800])),
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -197,7 +199,7 @@ class _SchedulePageState extends State<SchedulePage> {
               },
             ),
             TextButton(
-              child: Text('Host Meeting',
+              child: Text(AppLocalizations.of(context)!.host_meeting,
                   style: TextStyle(color: Colors.green[800])),
               onPressed: () {
                 // Check if the widget is still mounted

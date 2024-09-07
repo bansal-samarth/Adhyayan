@@ -1,5 +1,4 @@
 import 'package:adhyayan/pages/home.dart';
-import 'package:adhyayan/pages/login.dart';
 import 'package:adhyayan/pages/select_lang.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +21,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale _locale = const Locale('en'); 
+  Locale _locale = const Locale('en');
 
   @override
   void initState() {
     super.initState();
-    _loadLocale(); 
+    _loadLocale();
   }
 
   void _loadLocale() async {
@@ -63,8 +62,10 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: const [
         Locale('en'),
-        Locale('bn'),
         Locale('hi'),
+        Locale('bn'),
+        Locale('pa'),
+        Locale('gu'),
       ],
       home: AuthenticationWrapper(changeLanguage: _changeLanguage),
     );

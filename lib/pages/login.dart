@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:adhyayan/models/userinfo.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:adhyayan/pages/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -35,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
         final Map<String, dynamic> data = json.decode(response.body);
 
         if (data['Error'] == '-1') {
-          _showErrorDialog('User not found.');
+          _showErrorDialog(AppLocalizations.of(context)!.user_notfound);
         } else if (data['Password'] == password) {
           // Successful login
           await _saveLoginState(username);
@@ -52,16 +55,16 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else {
-            _showErrorDialog('Failed to fetch user information.');
+            _showErrorDialog(AppLocalizations.of(context)!.fail_fetch_info);
           }
         } else {
-          _showErrorDialog('Incorrect password.');
+          _showErrorDialog(AppLocalizations.of(context)!.incorrect_password);
         }
       } else {
-        _showErrorDialog('An error occurred. Please try again.');
+        _showErrorDialog(AppLocalizations.of(context)!.error);
       }
     } catch (e) {
-      _showErrorDialog('An error occurred. Please try again.');
+      _showErrorDialog(AppLocalizations.of(context)!.error);
     }
 
     setState(() {
@@ -90,13 +93,13 @@ class _LoginPageState extends State<LoginPage> {
             _userInfo = userInfoList.isNotEmpty ? userInfoList[0] : null;
           });
         } else {
-          _showErrorDialog('Failed to retrieve user information.');
+          _showErrorDialog(AppLocalizations.of(context)!.fail_retrieve_info);
         }
       } else {
-        _showErrorDialog('Username not found in preferences.');
+        _showErrorDialog(AppLocalizations.of(context)!.user_notfound_pref);
       }
     } catch (e) {
-      _showErrorDialog('An error occurred while fetching user information.');
+      _showErrorDialog(AppLocalizations.of(context)!.fail_fetch_info);
     }
   }
 
@@ -118,12 +121,12 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Login Failed'),
+        title: Text(AppLocalizations.of(context)!.login_failed),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -158,9 +161,9 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white,
                   ),
                   const SizedBox(height: 20.0),
-                  const Text(
-                    'Welcome Back',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.welcome_back,
+                    style: const TextStyle(
                       fontSize: 32.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -168,28 +171,28 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 10.0),
-                  const Text(
-                    'Learn Today, Lead Tomorrow.',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.tagline,
+                    style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.white70,
                     ),
                   ),
                   const SizedBox(height: 50.0),
-                  _buildTextField(
-                      _usernameController, Icons.person_outline, 'Username'),
+                  _buildTextField(_usernameController, Icons.person_outline,
+                      AppLocalizations.of(context)!.username),
                   const SizedBox(height: 20.0),
-                  _buildTextField(
-                      _passwordController, Icons.lock_outline, 'Password',
+                  _buildTextField(_passwordController, Icons.lock_outline,
+                      AppLocalizations.of(context)!.password,
                       isPassword: true),
                   const SizedBox(height: 20.0),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {},
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        '${AppLocalizations.of(context)!.forgot_password}?',
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
@@ -207,9 +210,9 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.login,
+                            style: const TextStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,
                             ),

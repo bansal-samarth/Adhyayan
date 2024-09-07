@@ -1,12 +1,12 @@
 import 'package:adhyayan/pages/video_page.dart';
 import 'package:flutter/material.dart';
-import 'chapters.dart'; // Ensure this is the correct import for your `ChaptersPage`
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'chapters.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LibraryPageState createState() => _LibraryPageState();
 }
 
@@ -15,32 +15,9 @@ class _LibraryPageState extends State<LibraryPage>
   late AnimationController _controller;
   String? selectedSubject;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        milliseconds: 700,
-      ),
-    );
-  }
+  late List<String> subjects;
+  late List<String> materials;
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  final List<String> subjects = [
-    "MATHEMATICS",
-    "SOCIAL STUDIES",
-    "SCIENCE",
-    "ENGLISH",
-    "HINDI",
-  ];
-
-  final List<String> materials = ["Book", "PPT", "Video"];
   final List<String> images = [
     "assets/sub/math.jpg",
     "assets/sub/sst.jpg",
@@ -50,14 +27,56 @@ class _LibraryPageState extends State<LibraryPage>
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
+    // Initialize with default values
+    subjects = ["MATHEMATICS", "SOCIAL STUDIES", "SCIENCE", "ENGLISH", "HINDI"];
+    materials = ["Book", "PPT", "Video"];
+
+    // Update with localized strings after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateLocalizedLists();
+    });
+  }
+
+  void _updateLocalizedLists() {
+    setState(() {
+      subjects = [
+        AppLocalizations.of(context)!.math,
+        AppLocalizations.of(context)!.sst,
+        AppLocalizations.of(context)!.science,
+        AppLocalizations.of(context)!.english,
+        AppLocalizations.of(context)!.hindi,
+      ];
+      materials = [
+        AppLocalizations.of(context)!.book,
+        AppLocalizations.of(context)!.ppt,
+        AppLocalizations.of(context)!.video,
+      ];
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0,
-        title: const Text(
-          'Library',
-          style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.library,
+          style:
+              const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -114,14 +133,19 @@ class _LibraryPageState extends State<LibraryPage>
                                       onTap: () {
                                         Navigator.push(
                                           context,
-                                          material == "Video"
+                                          material ==
+                                                  AppLocalizations.of(context)!
+                                                      .video
                                               ? MaterialPageRoute(
                                                   builder: (context) =>
                                                       VideoPlaybackPage(
                                                     subject: subjects[index],
                                                   ),
                                                 )
-                                              : (material == "Book")
+                                              : (material ==
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .book)
                                                   ? MaterialPageRoute(
                                                       builder: (context) =>
                                                           ChaptersPage(

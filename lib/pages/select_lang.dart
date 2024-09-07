@@ -1,5 +1,6 @@
 import 'package:adhyayan/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectLanguagePage extends StatefulWidget {
@@ -13,23 +14,23 @@ class SelectLanguagePage extends StatefulWidget {
 
 class _SelectLanguagePageState extends State<SelectLanguagePage> {
   final List<Map<String, String>> _languages = [
-    {'code': 'en', 'label': 'English', 'preview': 'Welcome Back'},
-    {'code': 'hi', 'label': 'हिन्दी', 'preview': 'वापसी पर स्वागत है'},
-    {'code': 'bn', 'label': 'বাংলা', 'preview': 'স্বাগতম'}
+    {'code': 'en', 'label': 'English'},
+    {'code': 'hi', 'label': 'हिन्दी'},
+    {'code': 'bn', 'label': 'বাংলা'},
+    {'code': 'pa', 'label': 'ਪੰਜਾਬੀ'},
+    {'code': 'gu', 'label': 'ગુજરાતી'}
   ];
 
   String _selectedLanguage = 'en';
-  String _previewText = 'Welcome Back';
 
   Future<void> _saveLanguagePreference(String languageCode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', languageCode);
   }
 
-  void _selectLanguage(String code, String preview) {
+  void _selectLanguage(String code) {
     setState(() {
       _selectedLanguage = code;
-      _previewText = preview;
     });
   }
 
@@ -49,91 +50,102 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Select Language',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 3 / 2,
-                ),
-                itemCount: _languages.length,
-                itemBuilder: (context, index) {
-                  final language = _languages[index];
-                  return GestureDetector(
-                    onTap: () => _selectLanguage(
-                        language['code']!, language['preview']!),
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: _selectedLanguage == language['code']
-                            ? Colors.green[800]
-                            : Colors.white24,
-                        borderRadius: BorderRadius.circular(16.0),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.select_lang,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10.0,
+                        color: Colors.black26,
+                        offset: Offset(2.0, 2.0),
                       ),
-                      child: Center(
-                        child: Text(
-                          language['label']!,
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 40.0),
+                ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: _languages.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final language = _languages[index];
+                    return GestureDetector(
+                      onTap: () => _selectLanguage(language['code']!),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        decoration: BoxDecoration(
+                          color: _selectedLanguage == language['code']
+                              ? Colors.white
+                              : Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16.0),
+                          boxShadow: _selectedLanguage == language['code']
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  )
+                                ]
+                              : [],
+                        ),
+                        child: Center(
+                          child: Text(
+                            language['label']!,
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: _selectedLanguage == language['code']
+                                  ? Colors.green[700]
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20.0),
-              Text(
-                _previewText,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white70,
+                    );
+                  },
                 ),
-              ),
-              const SizedBox(height: 40.0),
-              ElevatedButton(
-                onPressed: () async {
-                  await _saveLanguagePreference(_selectedLanguage);
-                  widget.onLanguageSelected(_selectedLanguage);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
+                const SizedBox(height: 40.0),
+                ElevatedButton(
+                  onPressed: () async {
+                    await _saveLanguagePreference(_selectedLanguage);
+                    widget.onLanguageSelected(_selectedLanguage);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.green[700],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50.0, vertical: 15.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 50.0, vertical: 15.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+                    elevation: 5,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.continuee,
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

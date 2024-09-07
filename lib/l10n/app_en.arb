@@ -8,7 +8,7 @@
 
     "language_page" : "......................................................................",
     "select_lang" : "Select Language",
-    "continue" : "Continue",
+    "continuee" : "Continue",
 
 
 
@@ -34,6 +34,7 @@
     "notice_board": "Notice Board",
     "view_more": "View More",
     "just_now": "Just now",
+    "hours_ago" : "hours ago",
     "yesterday": "Yesterday",
     "days_ago": "days ago",
     "from": "From",

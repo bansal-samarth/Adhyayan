@@ -1,4 +1,5 @@
 import 'package:adhyayan/pages/pdfview.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ChaptersPage extends StatelessWidget {
@@ -88,7 +89,7 @@ class ChaptersPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Tap to read',
+                              AppLocalizations.of(context)!.tap_to_read,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
