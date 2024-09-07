@@ -32,6 +32,8 @@ dependencies:
   shared_preferences: ^2.3.2
   syncfusion_flutter_pdfviewer: ^26.2.11
   youtube_player_flutter: ^8.1.2
+  flutter_localizations:
+    sdk: flutter
 
 
 
@@ -47,6 +49,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  generate : true
 
   assets:
     - assets/

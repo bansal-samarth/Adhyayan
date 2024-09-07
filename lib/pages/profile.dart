@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
@@ -8,6 +9,7 @@ class ProfilePage extends StatelessWidget {
   final String className;
   final String gender;
   final String? photoUrl;
+  final Function(String) changeLanguage;
 
   const ProfilePage({
     super.key,
@@ -16,6 +18,7 @@ class ProfilePage extends StatelessWidget {
     required this.className,
     required this.gender,
     this.photoUrl,
+    required this.changeLanguage,
   });
 
   @override
@@ -24,9 +27,10 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0,
-        title: const Text(
-          'Student Profile',
-          style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.student_profile,
+          style:
+              const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -34,6 +38,20 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            DropdownButton<String>(
+              value: Localizations.localeOf(context).languageCode,
+              items: const [
+                DropdownMenuItem(value: 'en', child: Text('English')),
+                DropdownMenuItem(value: 'hi', child: Text('Hindi')),
+                DropdownMenuItem(value: 'bn', child: Text('Bengali')),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  changeLanguage(value); // Update language
+                }
+              },
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -76,13 +94,20 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    ProfileDetailField(label: 'Name', value: name),
+                    ProfileDetailField(
+                        label: AppLocalizations.of(context)!.name, value: name),
                     const SizedBox(height: 20),
-                    ProfileDetailField(label: 'Class', value: className),
+                    ProfileDetailField(
+                        label: AppLocalizations.of(context)!.class_name,
+                        value: className),
                     const SizedBox(height: 20),
-                    ProfileDetailField(label: 'School Name', value: schoolName),
+                    ProfileDetailField(
+                        label: AppLocalizations.of(context)!.school_name,
+                        value: schoolName),
                     const SizedBox(height: 20),
-                    ProfileDetailField(label: 'Gender', value: gender),
+                    ProfileDetailField(
+                        label: AppLocalizations.of(context)!.gender,
+                        value: gender),
                   ],
                 ),
               ),
@@ -100,9 +125,9 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'LOGOUT',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.logout,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

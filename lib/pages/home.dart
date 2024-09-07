@@ -8,10 +8,11 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Function(String) changeLanguage; // Add this
+
+  const HomeScreen({super.key, required this.changeLanguage}); // Update constructor
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -70,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 schoolName: _schoolName!,
                 className: _className!,
                 gender: _gender!,
+                changeLanguage: widget.changeLanguage, // Access via widget
               )
             : const Center(child: CircularProgressIndicator());
       default:
@@ -104,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
         activeColor: Colors.green,
         inactiveColor: Colors.grey,
         onTap: (index) => setState(() => _bottomNavIndex = index),
-        //other params
       ),
     );
   }

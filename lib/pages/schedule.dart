@@ -180,7 +180,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   style: TextStyle(color: Colors.green[800])),
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
-                final username = prefs.getString('schoolName');
+                final username = prefs.getString('username');
 
                 // Check if the widget is still mounted
                 if (mounted) {

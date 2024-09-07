@@ -1,5 +1,6 @@
 import 'package:adhyayan/models/announcement.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
@@ -133,9 +134,10 @@ class _NoticePageState extends State<NoticePage> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0,
-        title: const Text(
-          'Activity',
-          style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.activity,
+          style:
+              const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
         ),
         centerTitle: true,
       ),

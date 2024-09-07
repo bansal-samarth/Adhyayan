@@ -10,7 +10,6 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -46,7 +45,11 @@ class _LoginPageState extends State<LoginPage> {
             await _saveUserInfoToPreferences(_userInfo!);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                  changeLanguage: _changeLanguage, // Pass changeLanguage
+                ),
+              ),
             );
           } else {
             _showErrorDialog('Failed to fetch user information.');
@@ -103,6 +106,12 @@ class _LoginPageState extends State<LoginPage> {
     await prefs.setString('schoolName', userInfo.schoolName);
     await prefs.setString('class', userInfo.classId);
     await prefs.setString('gender', userInfo.gender);
+  }
+
+  Future<void> _changeLanguage(String languageCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', languageCode);
+    // Update the app's locale (this should be handled by the main app)
   }
 
   void _showErrorDialog(String message) {
@@ -180,36 +189,32 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {},
                       child: const Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30.0),
+                  const SizedBox(height: 40.0),
                   _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        )
                       : ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.green[700],
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                            textStyle: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                horizontal: 50.0, vertical: 15.0),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
-                            elevation: 5,
                           ),
                           child: const Text(
-                            'LOGIN',
+                            'Login',
                             style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2),
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                  const SizedBox(height: 30.0),
                 ],
               ),
             ),
@@ -220,25 +225,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller, IconData icon, String label,
+      TextEditingController controller, IconData icon, String hintText,
       {bool isPassword = false}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white30),
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.white70),
-          border: InputBorder.none,
-          hintText: label,
-          hintStyle: TextStyle(color: Colors.green[100]),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+    return TextField(
+      controller: controller,
+      obscureText: isPassword,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.white70),
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white24,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
         ),
       ),
     );

@@ -1,0 +1,74 @@
+{
+    "appbar": ".........................................................................",
+    "activity": "Activity",
+    "schedule": "Schedule",
+    "library": "Library",
+    "student_profile": "Student Profile",
+
+
+    "language_page" : "......................................................................",
+    "select_lang" : "Select Language",
+    "continue" : "Continue",
+
+
+
+    "login_page": ".........................................................................",
+    "welcome_back" : "Welcome Back",
+    "tagline" : "Learn Today, Lead Tomorrow.",
+    "username" : "Username",
+    "password" : "Password",
+    "forgot_password" : "Forgot Password",
+    "login" : "Login",
+    "login_failed" : "Login Failed",
+    "ok" : "OK",
+    "user_notfound" : "User not found.",
+    "fail_fetch_info" : "Failed to fetch user information.",
+    "fail_retrieve_info" : "Failed to retrieve user information.",
+    "user_notfound_pref" : "Username not found in preferences.",
+    "incorrect_password" : "Incorrect password.",
+    "error" : "An error occurred. Please try again.",
+
+
+
+    "notice_page": ".........................................................................",
+    "notice_board": "Notice Board",
+    "view_more": "View More",
+    "just_now": "Just now",
+    "yesterday": "Yesterday",
+    "days_ago": "days ago",
+    "from": "From",
+    "share": "Share",
+    
+
+
+    "schedule_page": ".........................................................................",
+    "no_session": "No sessions for",
+    "duration": "Duration",
+    "join_meeting": "Join Meeting",
+    "host_meeting": "Host Meeting",
+    
+
+
+    "library_page": ".........................................................................",
+    "math": "MATHEMATICS",
+    "sst": "SOCIAL STUDIES",
+    "science": "SCIENCE",
+    "english": "ENGLISH",
+    "hindi": "HINDI",
+    "book": "Book",
+    "ppt": "PPT",
+    "video": "Video",
+    "chapter": "Chapter",
+    "tap_to_read": "Tap to read",
+    "pdf_view": "PDF View",
+    
+    
+
+    "profile_page": ".........................................................................",
+    "name": "Name",
+    "class_name": "Class",
+    "school_name": "School Name",
+    "gender": "Gender",
+    "logout": "LOGOUT"
+    
+}

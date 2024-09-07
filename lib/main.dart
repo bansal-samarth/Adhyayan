@@ -1,9 +1,12 @@
 import 'package:adhyayan/pages/home.dart';
 import 'package:adhyayan/pages/login.dart';
+import 'package:adhyayan/pages/select_lang.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,8 +14,37 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale _locale = const Locale('en'); 
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale(); 
+  }
+
+  void _loadLocale() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? languageCode = prefs.getString('languageCode') ?? 'en';
+    setState(() {
+      _locale = Locale(languageCode);
+    });
+  }
+
+  void _changeLanguage(String languageCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', languageCode);
+    setState(() {
+      _locale = Locale(languageCode);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +52,29 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
         textTheme: GoogleFonts.montserratTextTheme(),
       ),
-      home: const AuthenticationWrapper(),
+      locale: _locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('bn'),
+        Locale('hi'),
+      ],
+      home: AuthenticationWrapper(changeLanguage: _changeLanguage),
     );
   }
 }
 
 class AuthenticationWrapper extends StatelessWidget {
-  const AuthenticationWrapper({super.key});
+  final Function(String) changeLanguage;
+
+  const AuthenticationWrapper({super.key, required this.changeLanguage});
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +84,9 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasData && snapshot.data == true) {
-          return const HomeScreen(); // User is logged in
+          return HomeScreen(changeLanguage: changeLanguage);
         } else {
-          return const LoginPage(); // User is not logged in
+          return SelectLanguagePage(onLanguageSelected: changeLanguage);
         }
       },
     );
