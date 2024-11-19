@@ -148,10 +148,10 @@ class LanguageSelector extends StatelessWidget {
   final Function(String) onLanguageChanged;
 
   const LanguageSelector({
-    Key? key,
+    super.key,
     required this.currentLanguage,
     required this.onLanguageChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

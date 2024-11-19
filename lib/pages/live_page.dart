@@ -6,7 +6,7 @@ class LivePage extends StatefulWidget {
   final String liveID;
   final bool isHost;
 
-  const LivePage({Key? key, required this.liveID, this.isHost = false}) : super(key: key);
+  const LivePage({super.key, required this.liveID, this.isHost = false});
 
   @override
   _LivePageState createState() => _LivePageState();
@@ -35,7 +35,7 @@ class _LivePageState extends State<LivePage> {
 
   void _showPermissionDeniedMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Camera and Microphone permissions are required for live streaming.')),
+      const SnackBar(content: Text('Camera and Microphone permissions are required for live streaming.')),
     );
   }
 
@@ -43,8 +43,8 @@ class _LivePageState extends State<LivePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: ZegoUIKitPrebuiltLiveStreaming(
-        appID: 1331073039, // Fill in the appID from ZEGOCLOUD Admin Console.
-        appSign: "185726600161acf517ded45b39ac51a38888ecbc018cc9bfd9e5059467313ff0", // Fill in the appSign from ZEGOCLOUD Admin Console.
+        appID: 1976727116, // Fill in the appID from ZEGOCLOUD Admin Console.
+        appSign: "ec8c1d4fb0465a38134da822c9a4cf5af131dabb5556835e00ec8078c873139d", // Fill in the appSign from ZEGOCLOUD Admin Console.
         userID: 'user_id',
         userName: 'user_name',
         liveID: widget.liveID,

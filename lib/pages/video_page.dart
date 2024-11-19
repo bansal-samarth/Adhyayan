@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 class VideoPlaybackPage extends StatefulWidget {
   final String subject;
 
-  const VideoPlaybackPage({Key? key, required this.subject}) : super(key: key);
+  const VideoPlaybackPage({super.key, required this.subject});
 
   @override
   _VideoPlaybackPageState createState() => _VideoPlaybackPageState();

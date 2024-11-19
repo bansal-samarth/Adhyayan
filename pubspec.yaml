@@ -26,7 +26,6 @@ dependencies:
   calendar_slider: ^0.0.4
   intl: ^0.19.0
   get: ^4.6.6
-  flutter_webrtc: ^0.9.48+hotfix.1
   zego_uikit_prebuilt_live_streaming: ^3.12.4
   share_plus: ^10.0.0
   shared_preferences: ^2.3.2
