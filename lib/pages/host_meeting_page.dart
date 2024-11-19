@@ -10,8 +10,8 @@ class HostMeetingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: ZegoUIKitPrebuiltLiveStreaming(
-        appID: 1976727116, // Fill in the appID from ZEGOCLOUD Admin Console.
-        appSign: "ec8c1d4fb0465a38134da822c9a4cf5af131dabb5556835e00ec8078c873139d", // Fill in the appSign from ZEGOCLOUD Admin Console.
+        appID: 2007596387, // Fill in the appID from ZEGOCLOUD Admin Console.
+        appSign: "f9bbe27c348afa98a7d91f9249c703aeaf028226c61de56e947a04bc4d5ff84c", // Fill in the appSign from ZEGOCLOUD Admin Console.
         userID: 'host_user_id',
         userName: 'host_user_name',
         liveID: liveID,

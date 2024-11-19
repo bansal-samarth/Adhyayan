@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return const NoticePage();
       case 1:
-        return const SchedulePage();
+        return SchedulePage(fullName: _fullName,);
       case 2:
         return const LibraryPage();
       case 3:

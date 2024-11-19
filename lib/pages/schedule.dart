@@ -1,368 +1,83 @@
-import 'package:adhyayan/models/session.dart';
+import 'dart:convert';
 import 'package:adhyayan/pages/host_meeting_page.dart';
+import 'package:adhyayan/pages/viewer_meeting_page.dart';
 import 'package:flutter/material.dart';
-import 'package:calendar_slider/calendar_slider.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
+import 'package:calendar_slider/calendar_slider.dart';
 
-class LivePage extends StatelessWidget {
-  final String liveID;
-  final bool isHost;
 
-  const LivePage({super.key, required this.liveID, this.isHost = false});
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: ZegoUIKitPrebuiltLiveStreaming(
-        appID: 1976727116, // Fill in your appID from ZEGOCLOUD
-        appSign: "ec8c1d4fb0465a38134da822c9a4cf5af131dabb5556835e00ec8078c873139d", // Fill in your appSign from ZEGOCLOUD
-        userID: 'user_id',
-        userName: 'user_name',
-        liveID: liveID,
-        config: isHost
-            ? ZegoUIKitPrebuiltLiveStreamingConfig.host()
-            : ZegoUIKitPrebuiltLiveStreamingConfig.audience(),
-      ),
-    );
-  }
-}
 
 class SchedulePage extends StatefulWidget {
-  const SchedulePage({super.key});
+  const SchedulePage({super.key, required this.fullName}) ;
+  final String? fullName;
 
   @override
-  // ignore: library_private_types_in_public_api
   _SchedulePageState createState() => _SchedulePageState();
 }
 
 class _SchedulePageState extends State<SchedulePage> {
   late DateTime _selectedDate;
-  final Map<DateTime, List<Session>> _sessions = {};
+  List<Session> _sessions = [];
+  bool _isLoading = false; // Loading state
+
+  final Map<String, String> subjectContentMap = {
+    'Maths': 'Algebra',
+    'Science': 'Energy',
+    'English': 'Life of Pie',
+    'Hindi': 'Jeevan Dhara',
+    'History': 'World History',
+  };
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    _initializeSessions();
+    _fetchSessionsFromDynamoDB();
   }
 
-  void _initializeSessions() {
-    const jsonString = '''
-    {
-    "RequestItems": {
-        "YourTableName": [
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "Mathematics"},
-                        "Subject_Content": {"S": "Introduction to Algebra"},
-                        "Date": {"S": "2024-11-21"},
-                        "Time": {"S": "09:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "Science"},
-                        "Subject_Content": {"S": "Photosynthesis Process"},
-                        "Date": {"S": "2024-11-21"},
-                        "Time": {"S": "09:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "History"},
-                        "Subject_Content": {"S": "Ancient Civilizations"},
-                        "Date": {"S": "2024-11-21"},
-                        "Time": {"S": "10:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "English"},
-                        "Subject_Content": {"S": "Basic Grammar"},
-                        "Date": {"S": "2024-11-21"},
-                        "Time": {"S": "10:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "History"},
-                        "Subject_Content": {"S": "World War II Overview"},
-                        "Date": {"S": "2024-11-20"},
-                        "Time": {"S": "09:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "Mathematics"},
-                        "Subject_Content": {"S": "Trigonometry: Sine and Cosine"},
-                        "Date": {"S": "2024-11-20"},
-                        "Time": {"S": "09:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "Geography"},
-                        "Subject_Content": {"S": "Climate Change Effects"},
-                        "Date": {"S": "2024-11-20"},
-                        "Time": {"S": "10:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "Science"},
-                        "Subject_Content": {"S": "Electricity and Magnetism"},
-                        "Date": {"S": "2024-11-20"},
-                        "Time": {"S": "10:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "Chemistry"},
-                        "Subject_Content": {"S": "Organic Chemistry Basics"},
-                        "Date": {"S": "2024-11-22"},
-                        "Time": {"S": "09:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "Mathematics"},
-                        "Subject_Content": {"S": "Calculus: Derivatives"},
-                        "Date": {"S": "2024-11-22"},
-                        "Time": {"S": "09:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "Physics"},
-                        "Subject_Content": {"S": "Physics: Laws of Motion"},
-                        "Date": {"S": "2024-11-22"},
-                        "Time": {"S": "10:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "English"},
-                        "Subject_Content": {"S": "Literature: Modern Poetry"},
-                        "Date": {"S": "2024-11-22"},
-                        "Time": {"S": "10:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "Mathematics"},
-                        "Subject_Content": {"S": "Advanced Algebra"},
-                        "Date": {"S": "2024-11-23"},
-                        "Time": {"S": "09:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "Science"},
-                        "Subject_Content": {"S": "Introduction to Physics"},
-                        "Date": {"S": "2024-11-23"},
-                        "Time": {"S": "09:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "History"},
-                        "Subject_Content": {"S": "Middle Ages"},
-                        "Date": {"S": "2024-11-23"},
-                        "Time": {"S": "10:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "8"},
-                        "Channel_ID": {"S": "1"},
-                        "Subject": {"S": "English"},
-                        "Subject_Content": {"S": "Reading Comprehension"},
-                        "Date": {"S": "2024-11-23"},
-                        "Time": {"S": "10:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "History"},
-                        "Subject_Content": {"S": "Cold War Era"},
-                        "Date": {"S": "2024-11-19"},
-                        "Time": {"S": "09:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "Mathematics"},
-                        "Subject_Content": {"S": "Advanced Trigonometry"},
-                        "Date": {"S": "2024-11-19"},
-                        "Time": {"S": "09:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "Geography"},
-                        "Subject_Content": {"S": "Oceans and Currents"},
-                        "Date": {"S": "2024-11-19"},
-                        "Time": {"S": "10:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "9"},
-                        "Channel_ID": {"S": "2"},
-                        "Subject": {"S": "Science"},
-                        "Subject_Content": {"S": "Electromagnetism"},
-                        "Date": {"S": "2024-11-19"},
-                        "Time": {"S": "10:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "Chemistry"},
-                        "Subject_Content": {"S": "Chemical Bonding"},
-                        "Date": {"S": "2024-11-24"},
-                        "Time": {"S": "09:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "Mathematics"},
-                        "Subject_Content": {"S": "Integral Calculus"},
-                        "Date": {"S": "2024-11-24"},
-                        "Time": {"S": "09:30 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "Physics"},
-                        "Subject_Content": {"S": "Thermodynamics"},
-                        "Date": {"S": "2024-11-25"},
-                        "Time": {"S": "10:00 AM"}
-                    }
-                }
-            },
-            {
-                "PutRequest": {
-                    "Item": {
-                        "Class_ID": {"S": "10"},
-                        "Channel_ID": {"S": "3"},
-                        "Subject": {"S": "English"},
-                        "Subject_Content": {"S": "Shakespeare's Hamlet"},
-                        "Date": {"S": "2024-11-25"},
-                        "Time": {"S": "10:30 AM"}
-                    }
-                }
-            }
-        ]
-    }
-}''';
+  Future<void> _fetchSessionsFromDynamoDB() async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
 
-    final session = sessionFromJson(jsonString);
+    String dayOfWeek = DateFormat('EEEE').format(_selectedDate);
 
-    for (var tableName in session.requestItems.yourTableName) {
-      final item = tableName.putRequest.item;
-      final date = DateTime.parse(item.date.s);
-      final sessionForDay = Session(
-        classId: item.classId.s,
-        channelId: item.channelId.s,
-        subject: item.subject.s,
-        subjectContent: item.subjectContent.s,
-        date: date,
-        time: item.time.s,
-      );
+    const apiUrl =
+        "https://mtqlvltkr5.execute-api.us-east-1.amazonaws.com/timetflambda";
+    final queryParams = {
+      "ClassDay": dayOfWeek,
+      "Class_ID": "KV_8"
+    };
+    final uri = Uri.parse(apiUrl).replace(queryParameters: queryParams);
 
-      if (_sessions.containsKey(date)) {
-        _sessions[date]!.add(sessionForDay);
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final List timetable = responseData['Timetable'];
+
+        setState(() {
+          _sessions = timetable.map((sessionData) {
+            return Session(
+              subject: sessionData['Subject'],
+              subjectContent: subjectContentMap[sessionData['Subject']] ??
+                  "General Topic",
+              time: sessionData['ClassTime'],
+            );
+          }).toList();
+        });
       } else {
-        _sessions[date] = [sessionForDay];
+        print("Failed to fetch sessions. Status code: ${response.statusCode}");
       }
+    } catch (e) {
+      print("Error fetching sessions: $e");
+    } finally {
+      setState(() {
+        _isLoading = false; // End loading
+      });
     }
   }
 
@@ -408,42 +123,30 @@ class _SchedulePageState extends State<SchedulePage> {
                 calendarEventColor: Colors.green,
                 onDateSelected: (date) {
                   setState(() {
+                    _sessions.clear();
                     _selectedDate = date;
+                    _fetchSessionsFromDynamoDB(); // Fetch data for the new date
                   });
                 },
               ),
             ],
           ),
           Expanded(
-            child: _buildSessionList(),
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ),
+                  )
+                : _buildSessionList(),
           ),
         ],
       ),
     );
   }
-  void _hostCall() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LivePage(liveID: 'your_live_id', isHost: true),
-      ),
-    );
-  }
-
-  void _joinCall() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LivePage(liveID: 'your_live_id', isHost: false),
-      ),
-    );
-  }
 
   Widget _buildSessionList() {
-    final sessionsForDay = _sessions[DateTime(
-            _selectedDate.year, _selectedDate.month, _selectedDate.day)] ??
-        [];
-    if (sessionsForDay.isEmpty) {
+    if (_sessions.isEmpty) {
       return Center(
         child: Text(
           'No sessions for ${DateFormat('MMMM d, yyyy').format(_selectedDate)}',
@@ -451,17 +154,20 @@ class _SchedulePageState extends State<SchedulePage> {
         ),
       );
     }
+
     return ListView.builder(
-      itemCount: sessionsForDay.length,
+      itemCount: _sessions.length,
       itemBuilder: (context, index) {
-        final session = sessionsForDay[index];
+        final session = _sessions[index];
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           color: Colors.white,
           child: ListTile(
-            title: Text(session.subject,
-                style: TextStyle(
-                    color: Colors.green[700], fontWeight: FontWeight.bold)),
+            title: Text(
+              session.subject,
+              style: TextStyle(
+                  color: Colors.green[700], fontWeight: FontWeight.bold),
+            ),
             subtitle: Text('${session.subjectContent}\n${session.time}'),
             onTap: () {
               _showSessionDetails(session);
@@ -472,8 +178,7 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
- 
-void _showSessionDetails(Session session) {
+  void _showSessionDetails(Session session) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -481,49 +186,46 @@ void _showSessionDetails(Session session) {
         title: Text(session.subject, style: TextStyle(color: Colors.green[800])),
         content: Text('${session.subjectContent}\n${session.time}'),
         actions: <Widget>[
-          TextButton(
-            child: Text('Join Meeting', style: TextStyle(color: Colors.green[800])),
+          ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
 
               // Navigate to LivePage for joining the meeting
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LivePage(liveID: session.channelId, isHost: false)),
+                MaterialPageRoute(builder: (context) => const  LivePage(liveID: "123456", )),
               );
             },
+            child: const Text('Join Meeting'),
           ),
-          TextButton(
-            child: Text('Host Meeting', style: TextStyle(color: Colors.green[800])),
+          const SizedBox(width: 10), 
+          ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               // Navigate to HostMeetingPage
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HostMeetingPage(liveID: session.channelId)),
+                MaterialPageRoute(builder: (context) => const HostMeetingPage(liveID: "123456")),
               );
             },
+            child: const Text('Host Meeting'),
           ),
         ],
       );
     },
   );
 }
+
 }
+
 class Session {
-  final String classId;
-  final String channelId;
   final String subject;
   final String subjectContent;
-  final DateTime date;
   final String time;
 
   Session({
-    required this.classId,
-    required this.channelId,
     required this.subject,
     required this.subjectContent,
-    required this.date,
     required this.time,
   });
 }
